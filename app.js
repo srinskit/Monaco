@@ -27,6 +27,14 @@ app.post('/', function (req, res) {
     });
     res.redirect('/play');
 });
+
+app.get('/dash', function (req, res) {
+    res.render('dash');
+});
+app.post('/dash', function (req, res) {
+    res.redirect('/dash');
+});
+
 app.get('/play', function (req, res) {
     res.render('play');
 });

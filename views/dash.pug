@@ -1,0 +1,31 @@
+doctype html
+html
+    head
+        title Mingo
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+        script(type='application/x-javascript').
+            addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }
+        link(href='/stylesheets/style.css', rel='stylesheet', type='text/css', media='all')
+    body
+        .padding-all
+            .header
+                h1
+                    img(src='./images/5.png', alt=' ')
+                    | Mingo - Multiplayer Bingo
+            .design-w3l
+                .mail-form-agile
+                    form(action='#', method='post')
+                        label(for='invite') UserName
+                        input#invite(type='submit', value='Invite')
+                        br
+                        label(for='join') Lobby Name
+                        input#join(type='submit', value='Join')
+                        // Use this script to change Username values etc.
+                        //
+                          <script>
+                          document.getElementById('lbltipAddedComment').innerHTML = 'your tip has been submitted!';
+                          </script>
+                .clear
+            .footer
+                p © 2018 Designed for Code.Fun.Do by Pavan V. Fucker remove this.
