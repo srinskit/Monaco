@@ -1,0 +1,16 @@
+doctype html
+html
+    head
+        title Mingo
+        link(rel='stylesheet', type='text/css', href='/stylesheets/play.css')
+        script(src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
+        script(src='/javascripts/play.js')
+    body
+        table(id='tableGrid')
+            -var n=5;
+            while n-- > 0
+                -var m=5;
+                tr
+                    while m-- > 0
+                        td
+                            Button(class='buttonGrid' id=(4 - n) + 'x' + (4 - m))= 0
