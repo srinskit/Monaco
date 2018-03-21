@@ -415,7 +415,7 @@ label {
 .chat-window{
     bottom:0;
     position:fixed;
-    float:right;
+    float:left;
     margin-left:10px;
 }
 .chat-window > div > .panel{
