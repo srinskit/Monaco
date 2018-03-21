@@ -11,7 +11,7 @@ const GSock = require('../GameSocket');
 /**
  * Get port from environment and store in Express.
  */
-let port = normalizePort(process.env.PORT || '80');
+let port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
