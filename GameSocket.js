@@ -1,8 +1,10 @@
 const WebSocketServer = require('ws').Server;
 const Url = require('url');
+const uuid = require('uuid/v1');
 const AUTH = 'auth';
 
 class Game {
+
     constructor(gClient0, gClient1) {
         this.gClients = [gClient0, gClient1];
         this.grids = [undefined, undefined];
@@ -10,9 +12,12 @@ class Game {
         this.points = [0, 0];
         this.gameReady = false;
         this.whoseTurn = Math.round(Math.random());
-        this.notifyAll(GameSocket.makeJsonMsg('notify', {
-            msg: 'gameConstructed',
-            turn: this.gClients[this.whoseTurn].username
+        this.gid = uuid();
+        Game.games[this.gid] = this;
+        this.notifyAll(GameSocket.makeJsonMsg('gameConstructed', {
+            gid: this.gid,
+            p1: this.gClients[0],
+            p2: this.gClients[1]
         }));
     }
 
@@ -22,8 +27,8 @@ class Game {
 
     static generateReverseMap(grid) {
         let map = new Array(26);
-        for (let i = 1; i <= 5; ++i)
-            for (let j = 0; j <= 5; ++j)
+        for (let i = 0; i < 5; ++i)
+            for (let j = 0; j < 5; ++j)
                 map[grid[i][j]] = [i, j];
         // Return let obj problem much?
         return map;
@@ -32,25 +37,35 @@ class Game {
     initGrid(gClient, grid) {
         if (!Game.validateGrid(grid))
             return;
-        let id = this.gClients.indexOf(gClient);
+        let id = -1;
+        if (this.gClients[0] !== undefined && this.gClients[0] === gClient.username)
+            id = 0;
+        else if (this.gClients[1] !== undefined && this.gClients[1] === gClient.username)
+            id = 1;
         if (id === -1 || this.grids[id] !== undefined)
             return;
         this.grids[id] = grid;
         this.reverseMap[id] = Game.generateReverseMap(grid);
         if (this.grids[0] !== undefined && this.grids[1] !== undefined) {
-            this.notifyAll(GameSocket.makeJsonMsg('notify', {msg: 'gameReady'}));
+            this.notifyAll(GameSocket.makeJsonMsg('gameReady', {
+                turn: this.gClients[this.whoseTurn]
+            }));
             this.gameReady = true;
         }
     }
 
     makeMove(gClient, num) {
         num = Math.round(num);
-        if (!(1 <= num <= 25) || this.gameReady !== true) return;
-        if (this.gClients[this.whoseTurn].username !== gClient.username) return;
+        if (num < 1 || num > 25 || this.gameReady !== true) return;
+        if (this.gClients[this.whoseTurn] !== gClient.username) return;
         let coordinates = this.reverseMap[this.whoseTurn][num];
         let i = coordinates[0], j = coordinates[1], id = this.whoseTurn;
         if (this.grids[id][i][j] === 0) return;
         this.grids[id][i][j] = 0;
+        let other_id = id === 0 ? 1 : 0;
+        let x = this.reverseMap[other_id][num][0], y = this.reverseMap[other_id][num][1];
+        this.grids[id][i][j] = 0;
+        this.grids[other_id][x][y] = 0;
         let k;
         if (i === j) {
             for (k = 0; k < 5; ++k)
@@ -72,28 +87,54 @@ class Game {
             if (this.grids[id][k][j] !== 0)
                 break;
         if (k === 5) this.points[id]++;
-        let winningMove = undefined;
-        if (this.points[id] >= 5) {
-            winningMove = true;
-            this.endGame();
+        //Other
+        if (x === y) {
+            for (k = 0; k < 5; ++k)
+                if (this.grids[other_id][k][k] !== 0)
+                    break;
+            if (k === 5) this.points[other_id]++;
         }
-        this.notifyAll(GameSocket.makeJsonMsg('notify', {
-            msg: 'gameMove',
+        if (x === 5 - 1 - y) {
+            for (k = 0; k < 5; ++k)
+                if (this.grids[other_id][k][5 - 1 - k] !== 0)
+                    break;
+            if (k === 5) this.points[other_id]++;
+        }
+        for (k = 0; k < 5; ++k)
+            if (this.grids[other_id][x][k] !== 0)
+                break;
+        if (k === 5) this.points[other_id]++;
+        for (k = 0; k < 5; ++k)
+            if (this.grids[other_id][k][y] !== 0)
+                break;
+        if (k === 5) this.points[other_id]++;
+        let winner = undefined, draw = undefined;
+        if (this.points[id] >= 5 || this.points[other_id] >= 5) {
+            if (this.points[id] === this.points[other_id])
+                draw = true;
+            else
+                winner = this.points[id] > this.points[other_id] ? this.gClients[id] : this.gClients[other_id];
+        }
+        this.notifyAll(GameSocket.makeJsonMsg('gameMove', {
             num: num,
-            winningMove: winningMove
+            winner: winner,
+            draw: draw
         }));
+        if (winner !== undefined || draw !== undefined)
+            this.endGame();
         this.whoseTurn = (this.whoseTurn + 1) % 2;
     }
 
 
     endGame() {
-        this.notifyAll(GameSocket.makeJsonMsg('notify', 'gameEnd'));
+        this.notifyAll(GameSocket.makeJsonMsg('gameEnd', ''));
     }
 
     notifyAll(notification) {
-        this.gClients[0].send(notification);
-        this.gClients[1].send(notification);
+        GameClient.users[this.gClients[0]].send(notification);
+        GameClient.users[this.gClients[1]].send(notification);
     }
+
 }
 
 class GameClient {
@@ -102,6 +143,7 @@ class GameClient {
         this.wsClient = wsClient;
         wsClient.gClient = this;
         this.username = username;
+        this.available = true;
         GameClient.users[username] = this;
         wsClient.on('message', GameClient.onMessage);
         wsClient.on('close', GameClient.onClose);
@@ -270,6 +312,7 @@ class GameSocket {
         this.wss.on('connection', GameSocket.onConnection);
         GameClient.users = {};
         Lobby.lobbies = {};
+        Game.games = {};
         console.log('Started Server!')
     }
 
@@ -319,20 +362,33 @@ class GameSocket {
     static directMessage(data, toUsername, requestBy) {
         let toClient = GameClient.users[toUsername];
         if (toClient !== undefined) {
-            toClient.send(this.makeStringMsg('dm', {
+            toClient.send(this.makeJsonMsg('dm', {
                 from: requestBy.username,
                 data: data
             }));
         }
         else {
-            requestBy.send(this.makeStringMsg('notify', {msg: 'dm failed'}));
+            requestBy.send(this.makeJsonMsg('notify', {msg: 'dm failed'}));
         }
     }
 
+    static sendInvite(toUsername, requestBy) {
+        if (toUsername === requestBy.username) return;
+        let toClient = GameClient.users[toUsername];
+        if (toClient !== undefined) {
+            toClient.send(this.makeJsonMsg('gameInvite', {
+                from: requestBy.username
+            }));
+        }
+        else {
+            requestBy.send(this.makeJsonMsg('gameReject', {to: toUsername, msg: 'User unavailable!'}));
+        }
+    }
 
     static exec(command, gameClient) {
         if (command.data === undefined || command.type === undefined)
             return;
+        console.log(command);
         switch (command.type) {
             case 'lobbyCreate':
                 Lobby.createLobby(command.data.lobbyName, gameClient);
@@ -352,16 +408,38 @@ class GameSocket {
             case 'lobbyLeave':
                 Lobby.addUserToLobby(command.data.lobbyName, GameClient.users[command.data.username], gameClient);
                 break;
-            case 'lobbyBroadcastMsg':
+            case 'lobbyBroadcast':
                 Lobby.broadcastToLobby(command.data.lobbyName, command.data, gameClient);
                 break;
             case 'directMsg':
                 this.directMessage(command.data.to, command.data.data, gameClient);
                 break;
+            case 'gameInvite':
+                GameSocket.sendInvite(command.data.to, gameClient);
+                break;
+            case 'gameAccept':
+                if (GameClient.users[command.data.to])
+                    new Game(GameClient.users[command.data.to].username, gameClient.username);
+                break;
+            case 'gameReject':
+                if (GameClient.users[command.data.to])
+                    GameClient.users[command.data.to].send(this.makeJsonMsg('gameReject', {to: gameClient.username}));
+                break;
+            case 'gameGrid':
+                if (Game.games[command.data.gid])
+                    Game.games[command.data.gid].initGrid(gameClient, command.data.grid);
+                else
+                    gameClient.send(this.makeJsonMsg('error', {msg: 'Game not found!'}));
+                break;
+            case 'gameMove':
+                if (Game.games[command.data.gid])
+                    Game.games[command.data.gid].makeMove(gameClient, command.data.num);
+                else
+                    gameClient.send(this.makeJsonMsg('error', {msg: 'Game not found!'}));
+                break;
         }
 
     }
-
 
 }
 

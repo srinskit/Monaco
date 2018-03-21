@@ -19,25 +19,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
-    res.render('index');
-});
-app.post('/', function (req, res) {
-    res.cookie('username', req.body.name, {
-        maxAge: 7200000
-    });
-    res.redirect('/play');
-});
-
-app.get('/dash', function (req, res) {
     res.render('dash');
 });
-app.post('/dash', function (req, res) {
-    res.redirect('/dash');
-});
 
-app.get('/play', function (req, res) {
-    res.render('play');
-});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -56,5 +40,6 @@ app.use(function (err, req, res) {
     res.status(err.status || 500);
     res.render('error');
 });
+
 
 module.exports = app;

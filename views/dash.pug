@@ -1,12 +1,18 @@
 doctype html
 html
     head
-        title Mingo
+        title Mingo | Dash
         meta(name='viewport', content='width=device-width, initial-scale=1')
         meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
         script(type='application/x-javascript').
-            addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); }
+            addEventListener("load", function () {
+                setTimeout(hideURLbar, 0);
+            }, false); function hideURLbar() {
+                window.scrollTo(0, 1);
+            }
         link(href='/stylesheets/style.css', rel='stylesheet', type='text/css', media='all')
+        script(src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
+        script(src='/javascripts/dash.js')
     body
         .padding-all
             .header
@@ -15,17 +21,28 @@ html
                     | Mingo - Multiplayer Bingo
             .design-w3l
                 .mail-form-agile
-                    form(action='#', method='post')
-                        label(for='invite') UserName
+                    div#loginWrap(hidden=true)
+                        input#usernameField.padding(name='name', placeholder='Username', type='text')
+                        input#loginButton(value='Login', type='submit')
+                    div#lobbyWrap(hidden=true)
+                        input#opponentName(type='text' placeholder='Username')
                         input#invite(type='submit', value='Invite')
                         br
-                        label(for='join') Lobby Name
-                        input#join(type='submit', value='Join')
-                        // Use this script to change Username values etc.
-                        //
-                          <script>
-                          document.getElementById('lbltipAddedComment').innerHTML = 'your tip has been submitted!';
-                          </script>
+                        input#logoutButton(type='submit', value='Logout')
+                    //br
+                    //input(type='text' placeholder='Lobby Name')
+                    //input#join(type='submit', value='Join')
+                    div#gameWrap(hidden=true)
+                        label#stateText
+                        div#gridWrap
+                            table(id='tableGrid')
+                                -var n=5;
+                                while n-- > 0
+                                    -var m=5;
+                                    tr
+                                        while m-- > 0
+                                            td
+                                                Button(class='buttonGrid' id=(4 - n) + 'x' + (4 - m))= 0
                 .clear
             .footer
                 p © 2018 Designed for Code.Fun.Do by Pavan V. Fucker remove this.
