@@ -21,7 +21,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function (req, res) {
     res.render('dash');
 });
-
+app.post('/', function (req, res) {
+    console.log(req);
+    res.end('200');
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

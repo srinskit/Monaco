@@ -1,4 +1,4 @@
-let username, wsoc, opname, gid, myTurn, stateText, loginWrap, lobbyWrap, gameWrap;
+let username, wsoc, opname, gid, myTurn, stateText, loginWrap, lobbyWrap, gameWrap, chatWrap;
 
 const grid = new Array(5);
 for (let i = 0; i < 5; i++)
@@ -10,8 +10,31 @@ $(document).ready(function () {
     loginWrap = $('#loginWrap');
     lobbyWrap = $('#lobbyWrap');
     gameWrap = $('#gameWrap');
+    chatWrap = $('#container');
     $('#btn-chat').click(function () {
         let msg = $('#btn-input').val();
+        $('#btn-input').prop('value', '');
+        // if (opname === undefined)
+        //     $.ajax({
+        //         url: url,
+        //         method: "POST",
+        //         dataType: "json",
+        //         crossDomain: true,
+        //         contentType: "application/json; charset=utf-8",
+        //         data: JSON.stringify(data),
+        //         cache: false,
+        //         beforeSend: function (xhr) {
+        //             /* Authorization header */
+        //             xhr.setRequestHeader("Authorization", "56140964bf0e4adb9b74dab4d07caf7b");
+        //             xhr.setRequestHeader("Content-Type", "");
+        //         },
+        //         success: function (data) {
+        //
+        //         },
+        //         error: function (jqXHR, textStatus, errorThrown) {
+        //
+        //         }
+        //     });
         $('.panel-body.msg_container_base').append(`<div class='row msg_container base_sent'><div class='col-xs-10 col-md-10'>
                 <div class='messages msg_sent'><p>${msg}</p></div></div></div>`);
         directMessage(opname, msg);
@@ -35,6 +58,7 @@ $(document).ready(function () {
         loginWrap.show();
         lobbyWrap.hide();
         gameWrap.hide();
+        chatWrap.hide();
     });
     // username = readCookie('username');
     if (username)
@@ -43,6 +67,7 @@ $(document).ready(function () {
         loginWrap.show();
         lobbyWrap.hide();
         gameWrap.hide();
+        chatWrap.hide();
     }
 
 });
@@ -71,6 +96,7 @@ function startWS(username) {
             loginWrap.show();
             lobbyWrap.hide();
             gameWrap.hide();
+            chatWrap.hide();
         };
     };
 
@@ -95,6 +121,7 @@ function process(msg) {
                 loginWrap.show();
                 lobbyWrap.hide();
                 gameWrap.hide();
+                chatWrap.hide();
                 alert('Could not login in');
             }
             break;
@@ -121,6 +148,7 @@ function process(msg) {
             loginWrap.hide();
             lobbyWrap.hide();
             gameWrap.show();
+            chatWrap.show();
             initGame();
             break;
         case 'gameReady':
@@ -156,6 +184,7 @@ function afterAuth() {
     loginWrap.hide();
     lobbyWrap.show();
     gameWrap.hide();
+    chatWrap.hide();
 }
 
 function initGame() {
