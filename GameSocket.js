@@ -359,7 +359,7 @@ class GameSocket {
         return JSON.stringify({type: type, data: data});
     }
 
-    static directMessage(data, toUsername, requestBy) {
+    static directMessage(toUsername, data, requestBy) {
         let toClient = GameClient.users[toUsername];
         if (toClient !== undefined) {
             toClient.send(this.makeJsonMsg('dm', {
@@ -412,7 +412,7 @@ class GameSocket {
                 Lobby.broadcastToLobby(command.data.lobbyName, command.data, gameClient);
                 break;
             case 'directMsg':
-                this.directMessage(command.data.to, command.data.data, gameClient);
+                this.directMessage(command.data.to, command.data.msg, gameClient);
                 break;
             case 'gameInvite':
                 GameSocket.sendInvite(command.data.to, gameClient);

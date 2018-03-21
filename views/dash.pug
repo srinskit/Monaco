@@ -10,15 +10,33 @@ html
             }, false); function hideURLbar() {
                 window.scrollTo(0, 1);
             }
+        script(src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
         link(href='https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css', rel='stylesheet', type='text/css', media='all')
         script(src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js")
-        script(src="https://code.jquery.com/jquery-1.11.1.min.js")
         link(href='/stylesheets/style.css', rel='stylesheet', type='text/css', media='all')
-        script(src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous")
         script(src='/javascripts/dash.js')
 
 
     body
+        .container
+            #chat_window_1.row.chat-window.col-xs-5.col-md-3(style="margin-left:10px;")
+                .col-xs-12.col-md-12
+                    .panel.panel-default
+                        .panel-heading.top-bar
+                            .col-md-8.col-xs-8
+                                h3.panel-title
+                                    span.glyphicon.glyphicon-comment
+                                    label#chat_username
+                            .col-md-4.col-xs-4(style="text-align: right;")
+                                a(href="#")
+                                    span#minim_chat_window.glyphicon.glyphicon-minus.icon_minim
+                        .panel-body.msg_container_base
+
+                        .panel-footer
+                            .input-group
+                                input#btn-input.form-control.input-sm.chat_input(type="text" placeholder="Write your message here...")
+                                span.input-group-btn
+                                    button#btn-chat.btn.btn-primary.btn-sm Send
         .padding-all
             .header
                 h1
@@ -50,78 +68,5 @@ html
                                                 Button(class='buttonGrid' id=(4 - n) + 'x' + (4 - m))= 0
 
                 .clear
-                    .container
-                        #chat_window_1.row.chat-window.col-xs-5.col-md-3(style="margin-left:10px;")
-                            .col-xs-12.col-md-12
-                                .panel.panel-default
-                                    .panel-heading.top-bar
-                                        .col-md-8.col-xs-8
-                                            h3.panel-title
-                                                span.glyphicon.glyphicon-comment
-                                                |  Chat - Miguel
-                                        .col-md-4.col-xs-4(style="text-align: right;")
-                                            a(href="#")
-                                                span#minim_chat_window.glyphicon.glyphicon-minus.icon_minim
-                                    .panel-body.msg_container_base
-                                        .row.msg_container.base_sent
-                                            .col-md-10.col-xs-10
-                                                .messages.msg_sent
-                                                    p
-                                                        | that mongodb thing looks good, huh?
-                                                        | tiny master db, and huge document store
-                                                    time(datetime="2009-11-13T20:00") Timothy • 51 min
-                                            .col-md-2.col-xs-2.avatar
-                                                img.img-responsive(src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg")
-                                        .row.msg_container.base_receive
-                                            .col-md-2.col-xs-2.avatar
-                                                img.img-responsive(src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg")
-                                            .col-md-10.col-xs-10
-                                                .messages.msg_receive
-                                                    p
-                                                        | that mongodb thing looks good, huh?
-                                                        | tiny master db, and huge document store
-                                                    time(datetime="2009-11-13T20:00") Timothy • 51 min
-                                        .row.msg_container.base_receive
-                                            .col-md-2.col-xs-2.avatar
-                                                img.img-responsive(src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg")
-                                            .col-xs-10.col-md-10
-                                                .messages.msg_receive
-                                                    p
-                                                        | that mongodb thing looks good, huh?
-                                                        | tiny master db, and huge document store
-                                                    time(datetime="2009-11-13T20:00") Timothy • 51 min
-                                        .row.msg_container.base_sent
-                                            .col-xs-10.col-md-10
-                                                .messages.msg_sent
-                                                    p
-                                                        | that mongodb thing looks good, huh?
-                                                        | tiny master db, and huge document store
-                                                    time(datetime="2009-11-13T20:00") Timothy • 51 min
-                                            .col-md-2.col-xs-2.avatar
-                                                img.img-responsive(src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg")
-                                        .row.msg_container.base_receive
-                                            .col-md-2.col-xs-2.avatar
-                                                img.img-responsive(src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg")
-                                            .col-xs-10.col-md-10
-                                                .messages.msg_receive
-                                                    p
-                                                        | that mongodb thing looks good, huh?
-                                                        | tiny master db, and huge document store
-                                                    time(datetime="2009-11-13T20:00") Timothy • 51 min
-                                        .row.msg_container.base_sent
-                                            .col-md-10.col-xs-10
-                                                .messages.msg_sent
-                                                    p
-                                                        | that mongodb thing looks good, huh?
-                                                        | tiny master db, and huge document store
-                                                    time(datetime="2009-11-13T20:00") Timothy • 51 min
-                                            .col-md-2.col-xs-2.avatar
-                                                img.img-responsive(src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg")
-                                    .panel-footer
-                                        .input-group
-                                            input#btn-input.form-control.input-sm.chat_input(type="text" placeholder="Write your message here...")
-                                            span.input-group-btn
-                                                button#btn-chat.btn.btn-primary.btn-sm Send
-
             .footer
                 p © 2018 Designed for Code.Fun.Do by Pavan V.

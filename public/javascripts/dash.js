@@ -10,6 +10,12 @@ $(document).ready(function () {
     loginWrap = $('#loginWrap');
     lobbyWrap = $('#lobbyWrap');
     gameWrap = $('#gameWrap');
+    $('#btn-chat').click(function () {
+        let msg = $('#btn-input').val();
+        $('.panel-body.msg_container_base').append(`<div class='row msg_container base_sent'><div class='col-xs-10 col-md-10'>
+                <div class='messages msg_sent'><p>${msg}</p></div></div></div>`);
+        directMessage(opname, msg);
+    });
     $('#invite').click(function () {
         let opname = $('#opponentName').val();
         if (opname === undefined || opname.length === 0 || username === opname) return;
@@ -92,6 +98,10 @@ function process(msg) {
                 alert('Could not login in');
             }
             break;
+        case 'dm':
+            $('.panel-body.msg_container_base').append(`<div class='row msg_container base_receiver'><div class='col-xs-10 col-md-10'>
+                <div class='messages msg_receive'><p>${msg.data.data}</p></div></div></div>`);
+            break;
         case 'gameInvite':
             if (confirm(msg.data.from + ' has challenged you!'))
                 wsoc.send(makeMsg('gameAccept', {to: msg.data.from}));
@@ -107,6 +117,7 @@ function process(msg) {
         case 'gameConstructed':
             gid = msg.data.gid;
             opname = msg.data.p1 === username ? msg.data.p2 : msg.data.p1;
+            $('#chat_username').prop('innerHTML', opname);
             loginWrap.hide();
             lobbyWrap.hide();
             gameWrap.show();
@@ -166,6 +177,10 @@ function initGame() {
     });
 }
 
+function directMessage(to, msg) {
+    wsoc.send(makeMsg('directMsg', {to: to, msg: msg}));
+}
+
 function shuffle(array) {
     let currentIndex = array.length, temporaryValue, randomIndex;
     while (0 !== currentIndex) {
@@ -205,6 +220,7 @@ function readCookie(name) {
 function eraseCookie(name) {
     createCookie(name, "", -1);
 }
+
 $(document).on('click', '.panel-heading span.icon_minim', function (e) {
     var $this = $(this);
     if (!$this.hasClass('panel-collapsed')) {
@@ -226,15 +242,15 @@ $(document).on('focus', '.panel-footer input.chat_input', function (e) {
     }
 });
 $(document).on('click', '#new_chat', function (e) {
-    var size = $( ".chat-window:last-child" ).css("margin-left");
+    var size = $(".chat-window:last-child").css("margin-left");
     size_total = parseInt(size) + 400;
     alert(size_total);
-    var clone = $( "#chat_window_1" ).clone().appendTo( ".container" );
+    var clone = $("#chat_window_1").clone().appendTo(".container");
     clone.css("margin-left", size_total);
 });
 $(document).on('click', '.icon_close', function (e) {
     //$(this).parent().parent().parent().parent().remove();
-    $( "#chat_window_1" ).remove();
+    $("#chat_window_1").remove();
 });
 
 
