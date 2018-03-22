@@ -13,6 +13,7 @@ $(document).ready(function () {
     chatWrap.hide();
     $('#btn-chat').click(function () {
         let msg = $('#btn-input').val();
+        msg = msg.replace('>', '&gt;').replace('<', '&lt;');
         $('#btn-input').prop('value', '');
         // if (opname === undefined)
         //     $.ajax({

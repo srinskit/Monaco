@@ -360,6 +360,7 @@ class GameSocket {
     }
 
     static directMessage(toUsername, data, requestBy) {
+        data = data.replace('>', '&gt;').replace('<', '&lt;');
         let toClient = GameClient.users[toUsername];
         if (toClient !== undefined) {
             toClient.send(this.makeJsonMsg('dm', {
