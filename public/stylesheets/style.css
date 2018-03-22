@@ -420,7 +420,7 @@ label {
 }
 
 .panel {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .chat-window {
@@ -549,6 +549,6 @@ img {
 
 .btn-group.dropup {
     position: fixed;
-    left: 0px;
+    left: 0;
     bottom: 0;
 }

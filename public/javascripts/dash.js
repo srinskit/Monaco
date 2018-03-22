@@ -5,12 +5,12 @@ for (let i = 0; i < 5; i++)
     grid[i] = new Array(5);
 
 $(document).ready(function () {
-    // username = readCookie('username');
     stateText = $('#stateText');
     loginWrap = $('#loginWrap');
     lobbyWrap = $('#lobbyWrap');
     gameWrap = $('#gameWrap');
-    chatWrap = $('#container');
+    chatWrap = $('#chat_window_1');
+    chatWrap.hide();
     $('#btn-chat').click(function () {
         let msg = $('#btn-input').val();
         $('#btn-input').prop('value', '');
@@ -52,7 +52,6 @@ $(document).ready(function () {
         startWS(username);
     });
     $('#logoutButton').click(function () {
-        // eraseCookie('username');
         if (wsoc)
             wsoc.close();
         loginWrap.show();
@@ -60,7 +59,6 @@ $(document).ready(function () {
         gameWrap.hide();
         chatWrap.hide();
     });
-    // username = readCookie('username');
     if (username)
         startWS(username);
     else {
@@ -92,7 +90,6 @@ function startWS(username) {
             process(JSON.parse(event.data));
         };
         wsoc.onerror = wsoc.onclose = function (event) {
-            // eraseCookie('username');
             loginWrap.show();
             lobbyWrap.hide();
             gameWrap.hide();
@@ -116,7 +113,6 @@ function process(msg) {
             if (msg.data.result === "pass")
                 afterAuth();
             else {
-                // eraseCookie('username');
                 username = undefined;
                 loginWrap.show();
                 lobbyWrap.hide();
@@ -223,35 +219,8 @@ function shuffle(array) {
 }
 
 
-function createCookie(name, value, days) {
-    let expires;
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toGMTString();
-    } else {
-        expires = "";
-    }
-    document.cookie = name + "=" + value + expires + "; path=/";
-}
-
-function readCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return undefined;
-}
-
-function eraseCookie(name) {
-    createCookie(name, "", -1);
-}
-
 $(document).on('click', '.panel-heading span.icon_minim', function (e) {
-    var $this = $(this);
+    const $this = $(this);
     if (!$this.hasClass('panel-collapsed')) {
         $this.parents('.panel').find('.panel-body').slideUp();
         $this.addClass('panel-collapsed');
@@ -263,18 +232,19 @@ $(document).on('click', '.panel-heading span.icon_minim', function (e) {
     }
 });
 $(document).on('focus', '.panel-footer input.chat_input', function (e) {
-    var $this = $(this);
-    if ($('#minim_chat_window').hasClass('panel-collapsed')) {
+    const $this = $(this);
+    let obj = $('#minim_chat_window');
+    if (obj.hasClass('panel-collapsed')) {
         $this.parents('.panel').find('.panel-body').slideDown();
-        $('#minim_chat_window').removeClass('panel-collapsed');
-        $('#minim_chat_window').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        obj.removeClass('panel-collapsed');
+        obj.removeClass('glyphicon-plus').addClass('glyphicon-minus');
     }
 });
 $(document).on('click', '#new_chat', function (e) {
-    var size = $(".chat-window:last-child").css("margin-left");
+    const size = $(".chat-window:last-child").css("margin-left");
     size_total = parseInt(size) + 400;
     alert(size_total);
-    var clone = $("#chat_window_1").clone().appendTo(".container");
+    const clone = $("#chat_window_1").clone().appendTo(".container");
     clone.css("margin-left", size_total);
 });
 $(document).on('click', '.icon_close', function (e) {
