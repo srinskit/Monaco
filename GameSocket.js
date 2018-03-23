@@ -370,6 +370,7 @@ class GameSocket {
                 data: data
             }));
             try {
+                console.log(data);
                 let msg = data.msg;
                 if (msg[0] === '@')
                     if (msg.substr(1, 5) === 'mingo') {
