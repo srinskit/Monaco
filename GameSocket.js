@@ -416,7 +416,7 @@ class GameSocket {
             let usernames = data.sessionId.split(',');
             let reply = data.result.fulfillment.speech;
             for (let i = 0; i < usernames.length; ++i)
-                GameClient.users[usernames[i]].send(makeMsg('dm', {from: '@mingo', data: reply}));
+                GameClient.users[usernames[i]].send(this.makeJsonMsg('dm', {from: '@mingo', data: reply}));
         }
         catch (e) {
             console.log(e);
