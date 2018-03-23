@@ -1,4 +1,4 @@
-const http = require('http');
+const https = require('https');
 const WebSocketServer = require('ws').Server;
 const Url = require('url');
 const uuid = require('uuid/v1');
@@ -305,12 +305,11 @@ class Lobby {
 
 class GameSocket {
 
-    constructor(httpServer, pathOfSocketServer, app) {
+    constructor(httpServer, pathOfSocketServer) {
         this.wss = new WebSocketServer({
             server: httpServer,
             path: pathOfSocketServer
         });
-        this.nodeApp = app;
         this.wss.on('connection', GameSocket.onConnection);
         GameClient.users = {};
         Lobby.lobbies = {};
@@ -381,8 +380,8 @@ class GameSocket {
                         });
                         let options = {
                             host: 'api.dialogflow.com',
-                            port: 80,
-                            crossDomain:true,
+                            port: 443,
+                            crossDomain: true,
                             path: '/v1/query?v=20150910',
                             method: 'POST',
                             headers: {
@@ -390,7 +389,7 @@ class GameSocket {
                                 'Authorization': 'Bearer 56140964bf0e4adb9b74dab4d07caf7b'
                             }
                         };
-                        const httpreq = http.request(options, function (response) {
+                        const httpreq = https.request(options, function (response) {
                             response.setEncoding('utf8');
                             response.on('msg', function (chunk) {
                                 console.log("Body: " + chunk);
@@ -413,6 +412,15 @@ class GameSocket {
     }
 
     static onDialogFlowResponse(data) {
+        try {
+            let usernames = data.sessionId.split(',');
+            let reply = data.result.fulfillment.speech;
+            for (let i = 0; i < usernames.length; ++i)
+                GameClient.users[usernames[i]].send(makeMsg('dm', {from: '@mingo', data: reply}));
+        }
+        catch (e) {
+            console.log(e);
+        }
         console.log(data);
     }
 
