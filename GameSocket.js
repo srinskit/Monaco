@@ -1,5 +1,4 @@
-import * as http from "http";
-
+const http = require('http');
 const WebSocketServer = require('ws').Server;
 const Url = require('url');
 const uuid = require('uuid/v1');
