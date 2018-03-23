@@ -338,7 +338,8 @@ class GameSocket {
     }
 
     static authCred(cred) {
-        return cred.username !== undefined && cred.username.match('a-zA-Z0-9') && cred.password === 'password';
+
+        return cred.username !== undefined && /^[a-zA-Z0-9]+$/.test(cred.username) && cred.password === 'password';
     }
 
     static onAuthPass(wsClient) {
