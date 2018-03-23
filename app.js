@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 const app = express();
-
+app.dialogFlowPostHandler = undefined;
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
     res.render('dash');
 });
 app.post('/', function (req, res) {
-    console.log(req.body);
+    app.dialogFlowPostHandler(req.body);
     res.end('Thanks!');
 });
 

@@ -82,4 +82,4 @@ function onListening() {
     debug('Listening on ' + bind);
 }
 
-const gSocket = new GSock(server, '/');
+const gSocket = new GSock(server, '/', app);

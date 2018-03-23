@@ -304,11 +304,12 @@ class Lobby {
 
 class GameSocket {
 
-    constructor(httpServer, pathOfSocketServer) {
+    constructor(httpServer, pathOfSocketServer, app) {
         this.wss = new WebSocketServer({
             server: httpServer,
             path: pathOfSocketServer
         });
+        this.nodeApp = app;
         this.wss.on('connection', GameSocket.onConnection);
         GameClient.users = {};
         Lobby.lobbies = {};
@@ -368,11 +369,12 @@ class GameSocket {
                 from: requestBy.username,
                 data: data
             }));
-            if (data[0] === '@')
-                if (data.substr(1, 5) === 'mingo') {
-                    let data = JSON.stringify({
+            let msg = data.msg;
+            if (msg[0] === '@')
+                if (msg.substr(1, 5) === 'mingo') {
+                    let postData = JSON.stringify({
                         "lang": "en",
-                        "query": `${data.substring(5)}`,
+                        "query": `${msg.substring(5)}`,
                         "sessionId": `${requestBy.username},${toUsername}`
                     });
                     let options = {
@@ -387,14 +389,14 @@ class GameSocket {
                     };
                     const httpreq = http.request(options, function (response) {
                         response.setEncoding('utf8');
-                        response.on('data', function (chunk) {
+                        response.on('msg', function (chunk) {
                             console.log("Body: " + chunk);
                         });
                         response.on('end', function () {
                             console.log("End: " + chunk);
                         });
                     });
-                    httpreq.write(data);
+                    httpreq.write(postData);
                     httpreq.end();
                 }
         }
