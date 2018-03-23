@@ -361,8 +361,8 @@ class GameSocket {
     }
 
     static directMessage(toUsername, data, requestBy) {
+        if (data === undefined || data.length <= 0) return;
         data = data.replace('>', '&gt;').replace('<', '&lt;');
-
         let toClient = GameClient.users[toUsername];
         if (toClient !== undefined) {
             toClient.send(this.makeJsonMsg('dm', {
@@ -370,8 +370,7 @@ class GameSocket {
                 data: data
             }));
             try {
-                console.log(data);
-                let msg = data.msg;
+                let msg = data;
                 if (msg[0] === '@')
                     if (msg.substr(1, 5) === 'mingo') {
                         let postData = JSON.stringify({
@@ -402,6 +401,7 @@ class GameSocket {
                         httpreq.end();
                     }
             } catch (e) {
+                console.log(e);
             }
         }
 
