@@ -13,33 +13,9 @@ $(document).ready(function () {
     chatWrap.hide();
     $('#btn-chat').click(function () {
         let msg = $('#btn-input').val();
+        if (opname === undefined || msg === undefined || opname.length <= 0 || msg.length <= 0) return;
         msg = msg.replace('>', '&gt;').replace('<', '&lt;');
         $('#btn-input').prop('value', '');
-        if (opname === undefined) {
-            // $.ajax({
-            //     url: 'https://api.dialogflow.com/v1/query?v=20150910',
-            //     method: "POST",
-            //     dataType: "json",
-            //     crossDomain: true,
-            //     contentType: "application/json; charset=utf-8",
-            //     data: JSON.stringify({
-            //         "lang": "en",
-            //         "query": `${msg}`,
-            //         "sessionId": `${username}`
-            //     }),
-            //     cache: false,
-            //     beforeSend: function (xhr) {
-            //         xhr.setRequestHeader("Authorization", "Bearer 56140964bf0e4adb9b74dab4d07caf7b");
-            //         xhr.setRequestHeader("Content-Type", "application/json");
-            //     },
-            //     success: function (data) {
-            //         console.log('Sucksess');
-            //     },
-            //     error: function (jqXHR, textStatus, errorThrown) {
-            //         console.log('Failure');
-            //     }
-            // });
-        }
         $('.panel-body.msg_container_base').append(`<div class='row msg_container base_sent'><div class='col-xs-10 col-md-10'>
                 <div class='messages msg_sent'><p>${msg}</p></div></div></div>`);
         directMessage(opname, msg);
@@ -127,7 +103,7 @@ function process(msg) {
             }
             break;
         case 'dm':
-            if(msg.data.from === opname || msg.data.from === '@mingo') {
+            if (msg.data.from === opname || msg.data.from === '@mingo') {
                 $('.panel-body.msg_container_base').append(`<div class='row msg_container base_receiver'><div class='col-xs-10 col-md-10'>
                 <div class='messages msg_receive'><p>${msg.data.data}</p></div></div></div>`);
             }

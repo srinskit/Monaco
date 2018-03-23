@@ -414,7 +414,7 @@ class GameSocket {
     static onDialogFlowResponse(data) {
         try {
             let usernames = data.sessionId.split(',');
-            let reply = '@Mingo: '+ data.result.fulfillment.speech;
+            let reply = 'MingoBot: '+ data.result.fulfillment.speech;
             for (let i = 0; i < usernames.length; ++i)
                 GameClient.users[usernames[i]].send(GameSocket.makeJsonMsg('dm', {from: '@mingo', data: reply}));
         }
