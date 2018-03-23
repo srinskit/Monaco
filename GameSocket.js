@@ -126,14 +126,31 @@ class Game {
         this.whoseTurn = (this.whoseTurn + 1) % 2;
     }
 
+    gameAbandon(gUsername) {
+        if (this.gClients[0] !== gUsername && this.gClients[1] !== gUsername) return;
+        try {
+            if (this.gClients[0] === gUsername)
+                GameClient.users[this.gClients[1]].send(GameSocket.makeJsonMsg('gameEnd', {opleft: true}));
+            if (this.gClients[1] === gUsername)
+                GameClient.users[this.gClients[0]].send(GameSocket.makeJsonMsg('gameEnd', {opleft: true}));
+        }
+        catch (e) {
+
+        }
+    }
 
     endGame() {
-        this.notifyAll(GameSocket.makeJsonMsg('gameEnd', ''));
+        this.notifyAll(GameSocket.makeJsonMsg('gameEnd', {}));
     }
 
     notifyAll(notification) {
-        GameClient.users[this.gClients[0]].send(notification);
-        GameClient.users[this.gClients[1]].send(notification);
+        try {
+            GameClient.users[this.gClients[0]].send(notification);
+            GameClient.users[this.gClients[1]].send(notification);
+        }
+        catch (e) {
+
+        }
     }
 
 }
@@ -167,10 +184,14 @@ class GameClient {
     }
 
     send(jsonMsg, callback) {
-        if (callback)
-            this.wsClient.send(JSON.stringify(jsonMsg), callback);
-        else
-            this.wsClient.send(JSON.stringify(jsonMsg));
+        try {
+            if (callback)
+                this.wsClient.send(JSON.stringify(jsonMsg), callback);
+            else
+                this.wsClient.send(JSON.stringify(jsonMsg));
+        } catch (e) {
+
+        }
     }
 }
 
@@ -361,67 +382,70 @@ class GameSocket {
     }
 
     static directMessage(toUsername, data, requestBy) {
-        if (data === undefined || data.length <= 0) return;
-        data = data.replace('>', '&gt;').replace('<', '&lt;');
-        let toClient = GameClient.users[toUsername];
-        if (toClient !== undefined) {
-            toClient.send(this.makeJsonMsg('dm', {
-                from: requestBy.username,
-                data: data
-            }));
-            try {
-                let msg = data;
-                if (msg[0] === '@')
-                    if (msg.substr(1, 5) === 'mingo') {
-                        let postData = JSON.stringify({
-                            "lang": "en",
-                            "query": `${msg.substring(5)}`,
-                            "sessionId": `${requestBy.username},${toUsername}`
-                        });
-                        let options = {
-                            host: 'api.dialogflow.com',
-                            port: 443,
-                            crossDomain: true,
-                            path: '/v1/query?v=20150910',
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer 56140964bf0e4adb9b74dab4d07caf7b'
-                            }
-                        };
-                        const httpreq = https.request(options, function (response) {
-                            response.setEncoding('utf8');
-                            response.on('msg', function (chunk) {
-                                console.log("Body: " + chunk);
+        try {
+            if (data === undefined || data.length <= 0) return;
+            data = data.replace('>', '&gt;').replace('<', '&lt;');
+            let toClient = GameClient.users[toUsername];
+            if (toClient !== undefined) {
+                toClient.send(this.makeJsonMsg('dm', {
+                    from: requestBy.username,
+                    data: data
+                }));
+                try {
+                    let msg = data;
+                    if (msg[0] === '@')
+                        if (msg.substr(1, 5) === 'mingo') {
+                            let postData = JSON.stringify({
+                                "lang": "en",
+                                "query": `${msg.substring(5)}`,
+                                "sessionId": `${requestBy.username},${toUsername}`
                             });
-                            response.on('end', function () {
-                                console.log("End: " + chunk);
+                            let options = {
+                                host: 'api.dialogflow.com',
+                                port: 443,
+                                crossDomain: true,
+                                path: '/v1/query?v=20150910',
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': 'Bearer 56140964bf0e4adb9b74dab4d07caf7b'
+                                }
+                            };
+                            const httpreq = https.request(options, function (response) {
+                                response.setEncoding('utf8');
+                                response.on('msg', function (chunk) {
+                                    console.log("Body: " + chunk);
+                                });
+                                response.on('end', function () {
+                                    console.log("End: " + chunk);
+                                });
                             });
-                        });
-                        httpreq.write(postData);
-                        httpreq.end();
-                    }
-            } catch (e) {
-                console.log(e);
+                            httpreq.write(postData);
+                            httpreq.end();
+                        }
+                } catch (e) {
+                    console.log(e);
+                }
             }
-        }
 
-        else {
-            requestBy.send(this.makeJsonMsg('notify', {msg: 'dm failed'}));
+            else {
+                requestBy.send(this.makeJsonMsg('notify', {msg: 'dm failed'}));
+            }
+        } catch (e) {
+
         }
     }
 
     static onDialogFlowResponse(data) {
         try {
             let usernames = data.sessionId.split(',');
-            let reply = 'MingoBot: '+ data.result.fulfillment.speech;
+            let reply = 'MingoBot: ' + data.result.fulfillment.speech;
             for (let i = 0; i < usernames.length; ++i)
                 GameClient.users[usernames[i]].send(GameSocket.makeJsonMsg('dm', {from: '@mingo', data: reply}));
         }
         catch (e) {
             console.log(e);
         }
-        console.log(data);
     }
 
     static sendInvite(toUsername, requestBy) {
@@ -488,6 +512,10 @@ class GameSocket {
                     Game.games[command.data.gid].makeMove(gameClient, command.data.num);
                 else
                     gameClient.send(this.makeJsonMsg('error', {msg: 'Game not found!'}));
+                break;
+            case 'gameAbandon':
+                if (Game.games[command.data.gid])
+                    Game.games[command.data.gid].gameAbandon(gameClient.username);
                 break;
         }
 

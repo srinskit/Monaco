@@ -1,21 +1,48 @@
 let username, wsoc, opname, gid, myTurn, stateText, loginWrap, lobbyWrap, gameWrap, chatWrap;
-
+let chatInput, end = false;
 const grid = new Array(5);
 for (let i = 0; i < 5; i++)
     grid[i] = new Array(5);
+
+function showLogin() {
+    loginWrap.show();
+    lobbyWrap.hide();
+    gameWrap.hide();
+    chatWrap.hide();
+    $('#usernameField').focus();
+}
+
+function showLobby() {
+    loginWrap.hide();
+    lobbyWrap.show();
+    gameWrap.hide();
+    chatWrap.hide();
+    $('#opponentName').focus();
+}
+
+function showGame() {
+    loginWrap.hide();
+    lobbyWrap.hide();
+    gameWrap.show();
+    chatWrap.show();
+}
 
 $(document).ready(function () {
     stateText = $('#stateText');
     loginWrap = $('#loginWrap');
     lobbyWrap = $('#lobbyWrap');
     gameWrap = $('#gameWrap');
+    chatInput = $('#btn-input');
     chatWrap = $('#chat_window_1');
-    chatWrap.hide();
+    $('#abandonButton').click(function () {
+
+        window.location.replace('/');
+    });
     $('#btn-chat').click(function () {
-        let msg = $('#btn-input').val();
+        let msg = chatInput.val();
         if (opname === undefined || msg === undefined || opname.length <= 0 || msg.length <= 0) return;
         msg = msg.replace('>', '&gt;').replace('<', '&lt;');
-        $('#btn-input').prop('value', '');
+        chatInput.prop('value', '');
         $('.panel-body.msg_container_base').append(`<div class='row msg_container base_sent'><div class='col-xs-10 col-md-10'>
                 <div class='messages msg_sent'><p>${msg}</p></div></div></div>`);
         directMessage(opname, msg);
@@ -35,22 +62,16 @@ $(document).ready(function () {
     $('#logoutButton').click(function () {
         if (wsoc)
             wsoc.close();
-        loginWrap.show();
-        lobbyWrap.hide();
-        gameWrap.hide();
-        chatWrap.hide();
+        showLogin();
     });
     if (username)
         startWS(username);
-    else {
-        loginWrap.show();
-        lobbyWrap.hide();
-        gameWrap.hide();
-        chatWrap.hide();
-    }
-
+    else
+        showLogin();
 });
 $(window).on('beforeunload', function () {
+    if (gid !== undefined)
+        wsoc.send(makeMsg('gameAbandon', {gid: gid}));
     if (wsoc)
         wsoc.close();
 });
@@ -71,10 +92,7 @@ function startWS(username) {
             process(JSON.parse(event.data));
         };
         wsoc.onerror = wsoc.onclose = function (event) {
-            loginWrap.show();
-            lobbyWrap.hide();
-            gameWrap.hide();
-            chatWrap.hide();
+            showLogin();
         };
     };
 
@@ -95,10 +113,7 @@ function process(msg) {
                 afterAuth();
             else {
                 username = undefined;
-                loginWrap.show();
-                lobbyWrap.hide();
-                gameWrap.hide();
-                chatWrap.hide();
+                showLogin();
                 alert('Could not login in');
             }
             break;
@@ -124,34 +139,34 @@ function process(msg) {
             gid = msg.data.gid;
             opname = msg.data.p1 === username ? msg.data.p2 : msg.data.p1;
             $('#chat_username').prop('innerHTML', opname);
-            loginWrap.hide();
-            lobbyWrap.hide();
-            gameWrap.show();
-            chatWrap.show();
+            showGame();
             initGame();
             break;
         case 'gameReady':
             myTurn = msg.data.turn === username;
-            stateText.prop('innerHTML', myTurn ? 'Your turn' : `${opname} turn`);
+            stateText.prop('innerHTML', myTurn ? 'Your turn' : `${opname}'s turn`);
             break;
         case 'gameMove':
             myTurn = !myTurn;
-            stateText.prop('innerHTML', myTurn ? 'Your turn' : `${opname} turn`);
+            stateText.prop('innerHTML', myTurn ? 'Your turn' : `${opname}'s turn`);
             let button = $(`button[value='${msg.data.num}']`);
             button.prop('disabled', true);
-            button.prop('innerHTML', '');
+            button.prop('innerHTML', '&nbsp;');
             if (msg.data.draw === true) {
+                end = true;
                 stateText.prop('innerHTML', 'DRAW!');
                 $('.buttonGrid').prop('disabled', true);
             }
             else if (msg.data.winner !== undefined) {
+                end = true;
                 msg.data.winner = msg.data.winner === username ? 'You' : msg.data.winner;
                 stateText.prop('innerHTML', `${msg.data.winner} won!`);
                 $('.buttonGrid').prop('disabled', true);
             }
             break;
         case 'gameEnd':
-
+            if (msg.data.opleft === true && end === false)
+                stateText.prop('innerHTML', 'Opponent left 😞');
             break;
         case 'error':
             alert(msg.data.msg);
@@ -160,10 +175,7 @@ function process(msg) {
 }
 
 function afterAuth() {
-    loginWrap.hide();
-    lobbyWrap.show();
-    gameWrap.hide();
-    chatWrap.hide();
+    showLobby();
 }
 
 function initGame() {
