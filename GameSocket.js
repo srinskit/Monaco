@@ -369,37 +369,41 @@ class GameSocket {
                 from: requestBy.username,
                 data: data
             }));
-            let msg = data.msg;
-            if (msg[0] === '@')
-                if (msg.substr(1, 5) === 'mingo') {
-                    let postData = JSON.stringify({
-                        "lang": "en",
-                        "query": `${msg.substring(5)}`,
-                        "sessionId": `${requestBy.username},${toUsername}`
-                    });
-                    let options = {
-                        host: 'api.dialogflow.com',
-                        port: 443,
-                        path: '/v1/query?v=20150910',
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer 56140964bf0e4adb9b74dab4d07caf7b'
-                        }
-                    };
-                    const httpreq = http.request(options, function (response) {
-                        response.setEncoding('utf8');
-                        response.on('msg', function (chunk) {
-                            console.log("Body: " + chunk);
+            try {
+                let msg = data.msg;
+                if (msg[0] === '@')
+                    if (msg.substr(1, 5) === 'mingo') {
+                        let postData = JSON.stringify({
+                            "lang": "en",
+                            "query": `${msg.substring(5)}`,
+                            "sessionId": `${requestBy.username},${toUsername}`
                         });
-                        response.on('end', function () {
-                            console.log("End: " + chunk);
+                        let options = {
+                            host: 'api.dialogflow.com',
+                            port: 443,
+                            path: '/v1/query?v=20150910',
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer 56140964bf0e4adb9b74dab4d07caf7b'
+                            }
+                        };
+                        const httpreq = http.request(options, function (response) {
+                            response.setEncoding('utf8');
+                            response.on('msg', function (chunk) {
+                                console.log("Body: " + chunk);
+                            });
+                            response.on('end', function () {
+                                console.log("End: " + chunk);
+                            });
                         });
-                    });
-                    httpreq.write(postData);
-                    httpreq.end();
-                }
+                        httpreq.write(postData);
+                        httpreq.end();
+                    }
+            } catch (e) {
+            }
         }
+
         else {
             requestBy.send(this.makeJsonMsg('notify', {msg: 'dm failed'}));
         }
