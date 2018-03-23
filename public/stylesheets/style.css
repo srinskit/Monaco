@@ -143,12 +143,12 @@ p, a {
     margin: 0 auto;
 }
 
-.design-w3l {
+.m_design {
     width: 36%;
     margin: 0 auto;
 }
 
-.mail-form-agile {
+.m_form {
     padding: 50px 40px;
     text-align: center;
     background: rgba(23, 218, 218, 0.18);
@@ -160,7 +160,7 @@ p, a {
     margin: 20px 0 30px;
 }
 
-.mail-form-agile input[type="text"], .mail-form-agile input[type="password"] {
+.m_form input[type="text"], .m_form input[type="password"] {
     padding: 13px 10px;
     width: 92.5%;
     font-size: 16px;
@@ -179,7 +179,7 @@ p, a {
     font-weight: 400;
 }
 
-.mail-form-agile input[type="submit"] {
+.m_form input[type="submit"] {
     font-size: 18px;
     padding: 10px 20px;
     letter-spacing: 1.2px;
@@ -198,7 +198,7 @@ p, a {
     transition-duration: 0.9s;
 }
 
-.mail-form-agile input[type="submit"]:hover {
+.m_form input[type="submit"]:hover {
     -webkit-transition-duration: 0.9s;
     transition-duration: 0.9s;
     background: rgba(91, 157, 214, 0.76);
@@ -206,7 +206,7 @@ p, a {
 
 .footer {
     text-align: center;
-    padding-top: 75px;
+    padding-top: 200px;
     letter-spacing: 1.6px;
     line-height: 22px;
 }
@@ -249,7 +249,7 @@ label {
 /*-- responsive media queries --*/
 
 @media screen and (max-width: 1440px) {
-    .design-w3l {
+    .m_design {
         width: 40%;
     }
 
@@ -264,11 +264,11 @@ label {
 }
 
 @media screen and (max-width: 1280px) {
-    .design-w3l {
+    .m_design {
         width: 46%;
     }
 
-    .mail-form-agile {
+    .m_form {
         padding: 40px;
     }
 }
@@ -288,7 +288,7 @@ label {
 }
 
 @media screen and (max-width: 991px) {
-    .design-w3l {
+    .m_design {
         width: 54%;
     }
 
@@ -299,7 +299,7 @@ label {
         padding: 75px 30px;
     }
 
-    .design-w3l {
+    .m_design {
         width: 60%;
     }
 
@@ -318,7 +318,7 @@ label {
 }
 
 @media screen and (max-width: 667px) {
-    .design-w3l {
+    .m_design {
         width: 75%;
     }
 
@@ -333,15 +333,15 @@ label {
         font-size: 36px;
     }
 
-    .mail-form-agile {
+    .m_form {
         padding: 35px 30px;
     }
 
-    .mail-form-agile input[type="text"], .mail-form-agile input[type="password"] {
+    .m_form input[type="text"], .m_form input[type="password"] {
         font-size: 14px;
     }
 
-    .mail-form-agile input[type="submit"] {
+    .m_form input[type="submit"] {
         font-size: 16px;
     }
 
@@ -367,11 +367,11 @@ label {
         font-size: 28px;
     }
 
-    .design-w3l {
+    .m_design {
         width: 92%;
     }
 
-    .mail-form-agile input[type="submit"] {
+    .m_form input[type="submit"] {
         font-size: 14px;
     }
 
@@ -401,7 +401,7 @@ label {
         font-size: 22px;
     }
 
-    .design-w3l {
+    .m_design {
         width: 100%;
     }
 

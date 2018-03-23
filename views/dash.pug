@@ -46,8 +46,8 @@ html
             .header
                 h1
                     | Mingo - Multiplayer Bingo
-            .design-w3l
-                .mail-form-agile
+            .m_design
+                .m_form
                     div#loginWrap(hidden=true)
                         input#usernameField.padding(name='name', placeholder='Choose your username', type='text' autocomplete=false)
                         input#loginButton(value='Login', type='submit')
@@ -74,30 +74,31 @@ html
                         br
                         br
                         input#abandonButton(type='submit', value='Quit')
-                .tabbed(style='padding-left: 130px;padding-right: 130px;')
-                    input#tabbed1(name='tabbed', type='radio')
-                    section
-                        h1
-                            label(for='tabbed1') How to play?
-                        div
-                            ul
-                                li Wait for your turn, then select a number.
-                                li Try to clear lines; rows, cols or diags.
-                                li Be the first to clear at-least 5 lines!
-                                li If both players clear at-least 5 lines in a move, the one to clear higher lines wins.
-                                li A draw is declared if both players clear same number of lines!
-                    input#tabbed2(name='tabbed', type='radio', checked='')
-                    section
-                        h1
-                            label(for='tabbed2' ) Navigate MingO
-                        div
-                            ul
-                                li Select a username! (letters and digits).
-                                li Invite a friend using their username.
-                                li Play MingO and enjoy our chat-bot.
-                                li Refresh to start new game.
-                                li Enjoy a game of Mingo! ✌️
                 .clear
+            .tabbed(style='padding-left: 130px;padding-right: 130px;')
+                input#tabbed1(name='tabbed', type='radio')
+                section
+                    h1
+                        label(for='tabbed1') How to play?
+                    div
+                        ul
+                            li Wait for your turn, then select a number.
+                            li Try to clear lines; rows, cols or diags.
+                            li Be the first to clear at-least 5 lines!
+                            li If both players clear at-least 5 lines in a move, the one to clear higher lines wins.
+                            li A draw is declared if both players clear same number of lines!
+                input#tabbed2(name='tabbed', type='radio', checked='')
+                section
+                    h1
+                        label(for='tabbed2' ) Navigate MingO
+                    div
+                        ul
+                            li Select a username! (letters and digits).
+                            li Invite a friend using their username.
+                            li Play MingO and enjoy our chat-bot. Call chatbot by using @mingo "Your message"
+                            li Refresh to start new game.
+                            li Enjoy a game of Mingo! ✌️
+
 
             .footer
                 p Made with ❤ by BugSlayers for Code.Fun.Do!
