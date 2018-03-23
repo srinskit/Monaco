@@ -127,8 +127,10 @@ function process(msg) {
             }
             break;
         case 'dm':
-            $('.panel-body.msg_container_base').append(`<div class='row msg_container base_receiver'><div class='col-xs-10 col-md-10'>
+            if(msg.data.from === opname || msg.data.from === '@mingo') {
+                $('.panel-body.msg_container_base').append(`<div class='row msg_container base_receiver'><div class='col-xs-10 col-md-10'>
                 <div class='messages msg_receive'><p>${msg.data.data}</p></div></div></div>`);
+            }
             break;
         case 'gameInvite':
             if (confirm(msg.data.from + ' has challenged you!'))
