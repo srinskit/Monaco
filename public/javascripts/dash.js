@@ -163,7 +163,7 @@ function afterAuth() {
     loginWrap.hide();
     lobbyWrap.show();
     gameWrap.hide();
-    chatWrap.show();
+    chatWrap.hide();
 }
 
 function initGame() {
