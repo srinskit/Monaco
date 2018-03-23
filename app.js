@@ -22,7 +22,7 @@ app.get('/', function (req, res) {
 });
 app.post('/', function (req, res) {
     app.dialogFlowPostHandler(req.body);
-    res.end('Thanks!');
+    res.end('OK');
 });
 
 // catch 404 and forward to error handler

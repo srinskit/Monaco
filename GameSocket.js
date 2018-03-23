@@ -381,7 +381,8 @@ class GameSocket {
                         });
                         let options = {
                             host: 'api.dialogflow.com',
-                            port: 443,
+                            port: 80,
+                            crossDomain:true,
                             path: '/v1/query?v=20150910',
                             method: 'POST',
                             headers: {
@@ -409,6 +410,10 @@ class GameSocket {
         else {
             requestBy.send(this.makeJsonMsg('notify', {msg: 'dm failed'}));
         }
+    }
+
+    static onDialogFlowResponse(data) {
+        console.log(data);
     }
 
     static sendInvite(toUsername, requestBy) {
